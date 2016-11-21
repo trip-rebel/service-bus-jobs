@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>ServiceBusJobs</id>
+        <version>1.0.3</version>
+        <title>Service Bus-based Job System</title>
+        <authors>Pepijn Schoen</authors>
+        <owners>Pepijn Schoen</owners>
+        <licenseUrl>https://github.com/trip-rebel/service-bus-jobs/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/trip-rebel/service-bus-jobs</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Service Bus-based Job System for .NET Core</description>
+        <releaseNotes>Initial release.</releaseNotes>
+        <copyright>Copyright 2016</copyright>
+        <tags>C# aspnetcore jobs service queue azure</tags>
+        <dependencies>
+          <dependency id="AMQPNetLite" version="1.2.0" />
+          <dependency id="Microsoft.Extensions.Logging" version="1.0.0" />
+          <dependency id="Microsoft.Extensions.Options" version="1.0.0" />
+          <dependency id="Newtonsoft.Json" version="9.0.1" />
+          <dependency id="NETStandard.Library" version="1.6.0" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Release\**\*.dll" target="lib" />
+        <file src="bin\Release\**\*.pdb" target="lib" />
+        <file src="**\*.cs" target="src" />
+    </files>
+</package>
