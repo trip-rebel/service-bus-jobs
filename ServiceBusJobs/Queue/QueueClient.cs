@@ -44,9 +44,19 @@ namespace JobSystem.Queue
             connection = new Connection(address);
             session = new Session(connection);
 
+            session.Closed += Session_Closed;
+
             Renew(session, serviceBusName);
 
             startRenewTimer();
+        }
+
+        private void Session_Closed(AmqpObject sender, Amqp.Framing.Error error)
+        {
+            if (!cancellationTokenSource.IsCancellationRequested)
+            {
+                renewSession();
+            }
         }
 
         private void startRenewTimer()
@@ -59,7 +69,10 @@ namespace JobSystem.Queue
             await Task.Delay(5 * 60 * 1000, token);
 
             if (!token.IsCancellationRequested)
+            {
+                session.Closed -= Session_Closed;
                 renewSession();
+            }
         }
 
         public void Dispose()
