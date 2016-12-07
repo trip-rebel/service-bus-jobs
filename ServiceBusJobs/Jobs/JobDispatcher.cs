@@ -36,7 +36,6 @@ namespace JobSystem.Jobs
             } catch(Exception e)
             {
                 _logger.LogError(e.Message);
-                throw;
             }
             finally {
                 scope.Dispose();

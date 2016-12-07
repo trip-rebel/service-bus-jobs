@@ -1,5 +1,6 @@
 ﻿using Amqp;
 using JobSystem.Jobs;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using System;
@@ -14,13 +15,14 @@ namespace JobSystem.Queue
         public Action<QueueMessage> OnMessage { get; set; }
 
         public QueueListener(IOptions<JobSystemOptions> optionsAccessor,
-            IJobDispatcher dispatcher) : base(optionsAccessor)
+            IJobDispatcher dispatcher,
+            ILogger<QueueListener> logger) : base(optionsAccessor, logger)
         {
             if (optionsAccessor == null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
             }
-
+            
             var options = optionsAccessor.Value;
 
             if (options.EnableListener)
@@ -64,7 +66,7 @@ namespace JobSystem.Queue
 
                     receiver.Accept(message);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     receiver.Reject(message);
                 }

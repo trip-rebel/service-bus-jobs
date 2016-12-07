@@ -1,8 +1,8 @@
-﻿{
+{
   "version": "1.0.0-*",
 
   "dependencies": {
-    "AMQPNetLite": "1.2.0",
+    "AMQPNetLite": "1.2.2",
     "Microsoft.Extensions.Logging": "1.0.0",
     "Microsoft.Extensions.Options": "1.0.0",
     "NETStandard.Library": "1.6.0",

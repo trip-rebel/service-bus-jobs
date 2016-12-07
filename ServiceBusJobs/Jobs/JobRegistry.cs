@@ -13,9 +13,15 @@ namespace JobSystem.Jobs
 
         public IJob Lookup(Type type)
         {
-            var job = (IJob)provider.GetService(type);
+            try
+            {
+                var job = (IJob)provider.GetService(type);
 
-            return job;
+                return job;
+            } catch(Exception)
+            {
+                return null;
+            }
         }
     }
 }

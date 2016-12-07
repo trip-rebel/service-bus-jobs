@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using JobSystem.Jobs;
+using Microsoft.Extensions.Logging;
 
 namespace JobSystem.Queue
 {
@@ -16,15 +17,19 @@ namespace JobSystem.Queue
 
         private readonly Address address;
         private readonly string serviceBusName;
+        private readonly ILogger<QueueClient> logger;
 
         protected abstract void Renew(Session session, string serviceBusName);
 
-        protected QueueClient(IOptions<JobSystemOptions> optionsAccessor)
+        protected QueueClient(IOptions<JobSystemOptions> optionsAccessor,
+            ILogger<QueueClient> logger)
         {
             if (optionsAccessor == null)
             {
                 throw new ArgumentNullException(nameof(optionsAccessor));
             }
+
+            this.logger = logger;
 
             var options = optionsAccessor.Value;
 
@@ -39,42 +44,32 @@ namespace JobSystem.Queue
 
             renewSession();
         }
-        private void renewSession()
+
+        protected void renewSession()
         {
+            logger.LogInformation("Renewing session");
+
             connection = new Connection(address);
             session = new Session(connection);
 
             session.Closed += Session_Closed;
 
             Renew(session, serviceBusName);
-
-            startRenewTimer();
         }
 
-        private void Session_Closed(AmqpObject sender, Amqp.Framing.Error error)
+        private void Session_Closed(AmqpObject client, Amqp.Framing.Error error)
         {
+            if (client.Error != null)
+            {
+                logger.LogError($"Closed connection with error code {client.Error.Condition}: {client.Error.Description}");
+            }
+
             if (!cancellationTokenSource.IsCancellationRequested)
             {
                 renewSession();
             }
         }
-
-        private void startRenewTimer()
-        {
-            delayedRenewSession(cancellationTokenSource.Token);
-        }
-
-        private async Task delayedRenewSession(CancellationToken token)
-        {
-            await Task.Delay(5 * 60 * 1000, token);
-
-            if (!token.IsCancellationRequested)
-            {
-                session.Closed -= Session_Closed;
-                renewSession();
-            }
-        }
-
+        
         public void Dispose()
         {
             cancellationTokenSource.Cancel();
