@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using JobSystem.Jobs;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace JobSystem.Queue
 {
@@ -16,6 +17,8 @@ namespace JobSystem.Queue
             ILogger<QueueSender> logger) : base(optionsAccessor, logger)
         {
             this.logger = logger;
+
+            renewSession();
         }
 
         public async Task SendAsync(QueueMessage queueMessage)
@@ -25,10 +28,27 @@ namespace JobSystem.Queue
                 renewSession();
             }
 
-            await sender.SendAsync(new Message(JsonConvert.SerializeObject(queueMessage)));
+            try
+            {
+                await sender.SendAsync(new Message(JsonConvert.SerializeObject(queueMessage)));
 
-            if (sender.Error != null) {
-                logger.LogError($"Failed sending message with error code {sender.Error.Condition}: {sender.Error.Description}");
+                if (sender.Error != null)
+                {
+                    logger.LogError($"Failed sending message with error code {sender.Error.Condition}: {sender.Error.Description}");
+                    throw new Exception(sender.Error.Description);
+                }
+            } catch(Exception e)
+            {
+                logger.LogError(e.Message);
+
+                renewSession();
+
+                await sender.SendAsync(new Message(JsonConvert.SerializeObject(queueMessage)));
+
+                if (sender.Error != null)
+                {
+                    logger.LogError($"Failed sending message with error code {sender.Error.Condition}: {sender.Error.Description}");
+                }
             }
         }
 

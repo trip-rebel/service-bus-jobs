@@ -41,8 +41,6 @@ namespace JobSystem.Queue
             serviceBusName = options.ServiceBusName;
 
             cancellationTokenSource = new CancellationTokenSource();
-
-            renewSession();
         }
 
         protected void renewSession()

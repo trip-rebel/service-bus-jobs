@@ -34,6 +34,8 @@ namespace JobSystem.Queue
                     await dispatcher.Dispatch(message);
                 };
             }
+
+            renewSession();
         }
 
         protected override void Renew(Session session, string serviceBusName)
