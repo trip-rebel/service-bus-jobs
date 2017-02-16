@@ -19,27 +19,23 @@ namespace JobSystem.Jobs
         public async Task Dispatch(QueueMessage message)
         {
             var scope = _logger.BeginScope(message);
+            
+            _logger.LogInformation($"Executing job {message.Topic}");
 
-            try
+            var type = Type.GetType(message.Topic);
+            var job = jobRegistry.Lookup(type);
+
+            if (job == null)
             {
-                _logger.LogInformation("Executing job {name}", message.Topic);
+                throw new ArgumentException($"Type '{message.Topic}' not found in service descriptor.");
+            }
 
-                var type = Type.GetType(message.Topic);
-                var job = jobRegistry.Lookup(type);
-
-                if (job == null)
-                {
-                    throw new ArgumentException($"Type '{message.Topic}' not found in service descriptor.");
-                }
-
-                await job.ExecuteAsync(message);
-            } catch(Exception e)
+            if(!await job.ExecuteAsync(message))
             {
-                _logger.LogError(e.Message);
+                throw new Exception($"Job {message.Topic} was unsuccesful.");
             }
-            finally {
-                scope.Dispose();
-            }
+
+            scope.Dispose();
         }
     }
 }

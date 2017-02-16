@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>ServiceBusJobs</id>
-        <version>1.1.4</version>
+        <version>1.1.7</version>
         <title>Service Bus-based Job System</title>
         <authors>Pepijn Schoen</authors>
         <owners>Pepijn Schoen</owners>
@@ -10,8 +10,8 @@
         <projectUrl>https://github.com/trip-rebel/service-bus-jobs</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Service Bus-based Job System for .NET Core</description>
-        <releaseNotes>Release without timers.</releaseNotes>
-        <copyright>Copyright 2016</copyright>
+        <releaseNotes>Reject unsuccessful jobs.</releaseNotes>
+        <copyright>Copyright 2016-2017</copyright>
         <tags>C# aspnetcore jobs service queue azure</tags>
         <dependencies>
           <dependency id="AMQPNetLite" version="1.2.2" />

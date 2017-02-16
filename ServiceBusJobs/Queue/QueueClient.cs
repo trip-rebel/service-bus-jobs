@@ -17,7 +17,8 @@ namespace JobSystem.Queue
 
         private readonly Address address;
         private readonly string serviceBusName;
-        private readonly ILogger<QueueClient> logger;
+
+        protected readonly ILogger<QueueClient> logger;
 
         protected abstract void Renew(Session session, string serviceBusName);
 

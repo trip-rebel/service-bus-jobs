@@ -68,8 +68,10 @@ namespace JobSystem.Queue
 
                     receiver.Accept(message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    logger.LogError(e.Message);
+
                     receiver.Reject(message);
                 }
             });
