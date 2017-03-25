@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBusJobs", "ServiceBusJobs\ServiceBusJobs.xproj", "{C8622FBD-1556-4394-AEB1-D6E05D9AB5FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBusJobs", "ServiceBusJobs\ServiceBusJobs.csproj", "{C8622FBD-1556-4394-AEB1-D6E05D9AB5FD}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceBusJobs.Tests", "ServiceBusJobs.Tests\ServiceBusJobs.Tests.xproj", "{BFC2253E-C97C-48BE-A731-C7911EC8C81F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceBusJobs.Tests", "ServiceBusJobs.Tests\ServiceBusJobs.Tests.csproj", "{BFC2253E-C97C-48BE-A731-C7911EC8C81F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
