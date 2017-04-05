@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
-using JobSystem.Jobs;
-using JobSystem.Queue;
+using ServiceBusJobs.Jobs;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -15,12 +14,10 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 
             services.AddOptions();
-
-            services.TryAdd(ServiceDescriptor.Singleton<IJobRegistry, JobRegistry>());
+            
             services.TryAdd(ServiceDescriptor.Singleton<IJobScheduler, JobScheduler>());
             services.TryAdd(ServiceDescriptor.Singleton<IJobDispatcher, JobDispatcher>());
-            services.TryAdd(ServiceDescriptor.Singleton<IQueueSender, QueueSender>());
-            services.TryAdd(ServiceDescriptor.Singleton<IQueueListener, QueueListener>());
+            services.TryAdd(ServiceDescriptor.Singleton<IJobListener, JobListener>());
 
             return services;
         }

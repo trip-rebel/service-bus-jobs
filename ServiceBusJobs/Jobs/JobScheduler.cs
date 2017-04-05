@@ -1,32 +1,31 @@
-﻿using JobSystem.Queue;
+﻿using Microsoft.Azure.ServiceBus;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace JobSystem.Jobs
+namespace ServiceBusJobs.Jobs
 {
     public class JobScheduler : IJobScheduler
     {
-        private readonly IQueueSender queueClient;
-        private readonly IJobRegistry jobRegistry;
+        private QueueClient queueClient;
 
-        public JobScheduler(IQueueSender queueClient,
-            IJobRegistry jobRegistry)
+        public JobScheduler(IOptions<JobSystemOptions> optionsAccessor)
         {
-            this.queueClient = queueClient;
-            this.jobRegistry = jobRegistry;
+            queueClient = new QueueClient(optionsAccessor.Value.ServiceBusConnectionString,
+                optionsAccessor.Value.ServiceBusName,
+                ReceiveMode.PeekLock);
         }
 
         public async Task Schedule<T>(Type type, T body)
         {
-            var job = jobRegistry.Lookup(type);
-            if(job == null)
-            {
-                throw new ArgumentException($"Type '{type.AssemblyQualifiedName}' not found in service descriptor.");
-            }
+            var serializedBody = JsonConvert.SerializeObject(body);
+            var message = new Message(Encoding.UTF8.GetBytes(serializedBody));
 
-            var message = new QueueMessage(type.AssemblyQualifiedName);
-            message.SetBody(body);
-
+            message.UserProperties["BodyType"] = body?.GetType()?.AssemblyQualifiedName ?? string.Empty;
+            message.UserProperties["Type"] = type.AssemblyQualifiedName;
+            
             await queueClient.SendAsync(message);
         }
     }

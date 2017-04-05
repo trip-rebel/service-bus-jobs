@@ -1,41 +1,34 @@
-﻿using JobSystem.Queue;
+﻿using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
-namespace JobSystem.Jobs
+namespace ServiceBusJobs.Jobs
 {
     public class JobDispatcher : IJobDispatcher
     {
-        private readonly IJobRegistry jobRegistry;
-        private readonly ILogger _logger;
+        private IServiceProvider provider;
+        private ILogger<IJobDispatcher> logger;
 
-        public JobDispatcher(IJobRegistry jobRegistry, ILogger<JobDispatcher> logger)
+        public JobDispatcher(IServiceProvider provider,
+            ILogger<IJobDispatcher> logger)
         {
-            this.jobRegistry = jobRegistry;
-            _logger = logger;
+            this.provider = provider;
+            this.logger = logger;
         }
 
-        public async Task Dispatch(QueueMessage message)
+        public async Task Dispatch(Message message)
         {
-            var scope = _logger.BeginScope(message);
-            
-            _logger.LogInformation($"Executing job {message.Topic}");
-
-            var type = Type.GetType(message.Topic);
-            var job = jobRegistry.Lookup(type);
-
-            if (job == null)
+            var type = message.UserProperties["Type"];
+            if (type as Type == null)
             {
-                throw new ArgumentException($"Type '{message.Topic}' not found in service descriptor.");
+                type = Type.GetType(type as string);
             }
 
-            if(!await job.ExecuteAsync(message))
-            {
-                throw new Exception($"Job {message.Topic} was unsuccesful.");
-            }
+            logger.LogInformation($"Executing job {type.ToString()}");
 
-            scope.Dispose();
+            var job = (IJob)provider.GetService(type as Type);
+            await job.ExecuteAsync(new MessageContainer(message));
         }
     }
 }

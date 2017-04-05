@@ -1,10 +1,10 @@
-﻿using JobSystem.Queue;
+﻿using Microsoft.Azure.ServiceBus;
 using System.Threading.Tasks;
 
-namespace JobSystem.Jobs
+namespace ServiceBusJobs.Jobs
 {
     public interface IJobDispatcher
     {
-        Task Dispatch(QueueMessage message);
+        Task Dispatch(Message message);
     }
 }

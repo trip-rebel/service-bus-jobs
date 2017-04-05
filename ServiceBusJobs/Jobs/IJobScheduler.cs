@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace JobSystem.Jobs
+namespace ServiceBusJobs.Jobs
 {
     public interface IJobScheduler
     {
